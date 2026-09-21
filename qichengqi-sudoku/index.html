@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#111318" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="七乘七数独：7×7 拉丁方数独，每行每列填入 1–7 各一次。手机即开即玩。" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="七乘七数独" />
+    <title>七乘七数独</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/crazyhb/qichengqi-sudoku@58f0179fa5562b424a691647a4682f07a8847707/assets/index-BYmUr20k.css" />
+    <script type="module">
+      const url =
+        "https://cdn.jsdelivr.net/gh/crazyhb/qichengqi-sudoku@58f0179fa5562b424a691647a4682f07a8847707/assets/app.b64.txt";
+      const text = await (await fetch(url)).text();
+      const bytes = Uint8Array.from(atob(text.trim()), (c) => c.charCodeAt(0));
+      const src = new TextDecoder().decode(bytes);
+      await import(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+    </script>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="top">
+        <div class="brand">
+          <span class="mark" aria-hidden="true">7×7</span>
+          <h1>七乘七数独</h1>
+          <button class="icon-btn" id="btn-rules" type="button" aria-label="规则说明">?</button>
+        </div>
+        <div class="hud">
+          <span class="pill" id="hud-diff">简单</span>
+          <span class="pill" id="hud-time" aria-live="polite">00:00</span>
+          <span class="pill" id="hud-mistakes">失误 0</span>
+        </div>
+      </header>
+      <nav class="toolbar" aria-label="游戏操作">
+        <button type="button" id="btn-new">新局</button>
+        <button type="button" id="btn-diff">难度</button>
+        <button type="button" id="btn-undo">撤销</button>
+        <button type="button" id="btn-hint">提示</button>
+        <button type="button" id="btn-check">检查</button>
+        <button type="button" id="btn-notes" aria-pressed="false">笔记模式</button>
+      </nav>
+      <div class="board-wrap">
+        <div id="board" class="board" role="grid" aria-label="7 乘 7 数独棋盘"></div>
+      </div>
+      <div class="pad" id="pad" role="group" aria-label="数字键盘"></div>
+      <p class="status" id="status" aria-live="polite"></p>
+    </div>
+    <dialog class="sheet" id="dlg-rules">
+      <form method="dialog" class="sheet-body">
+        <h2>怎么玩</h2>
+        <p>这是 <strong>7×7 拉丁方数独</strong>：每行、每列填入 1–7 各一次，没有宫格。</p>
+        <ul>
+          <li>每一行必须包含数字 <strong>1–7 各一次</strong></li>
+          <li>每一列必须包含数字 <strong>1–7 各一次</strong></li>
+          <li>题目给出的深色数字是线索，不能改</li>
+        </ul>
+        <button type="submit" class="primary" value="ok">知道了</button>
+      </form>
+    </dialog>
+    <dialog class="sheet" id="dlg-new">
+      <form method="dialog" class="sheet-body">
+        <h2>难度</h2>
+        <p class="muted">点「新局」立刻再来一盘当前难度。</p>
+        <div class="choice-row">
+          <button type="submit" value="easy">简单</button>
+          <button type="submit" value="medium">中等</button>
+          <button type="submit" value="hard">困难</button>
+        </div>
+        <button type="submit" value="restart">重开本题</button>
+        <button type="submit" class="ghost" value="cancel">取消</button>
+      </form>
+    </dialog>
+    <dialog class="sheet" id="dlg-win">
+      <div class="sheet-body">
+        <div class="win-burst" aria-hidden="true"></div>
+        <h2>完成！</h2>
+        <p id="win-copy">这盘拉丁方已经填满。</p>
+        <dl class="stats" id="win-stats"></dl>
+        <div class="choice-row">
+          <button type="button" class="primary" id="btn-again">再来一局</button>
+          <button type="button" id="btn-win-close">看看棋盘</button>
+        </div>
+      </div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
